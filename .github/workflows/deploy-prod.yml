@@ -44,4 +44,4 @@ jobs:
       - name: Build new prod
         run: ssh -p 3732 "${SSH_USERNAME}"@"${SSH_HOST}" "cd src/game-remix-guesser-frontend && npm install && npm run build"
       - name: Move build files to web directory
-        run: ssh -p 3732 "${SSH_USERNAME}"@"${SSH_HOST}" "cd src/game-remix-guesser-frontend && cp -a build/. /home/www-data/grg/
+        run: ssh -p 3732 "${SSH_USERNAME}"@"${SSH_HOST}" "cd src/game-remix-guesser-frontend && cp -a build/. /home/www-data/grg/"
