@@ -8,6 +8,7 @@ node_modules
 /backend/game-remix-guesser-a41630194599.json
 /tests/e2e/videos/
 /tests/e2e/screenshots/
+build/
 
 
 # local env files

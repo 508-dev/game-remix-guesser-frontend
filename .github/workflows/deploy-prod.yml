@@ -1,0 +1,48 @@
+name: Deploy Prod
+
+# -----
+# This workflow will run whenever changes are pushed to main
+# -----
+
+on:
+  push:
+    branches:
+      - main
+env:
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  SSH_HOST: ${{ secrets.SSH_HOST }}
+  SSH_PORT: ${{ secrets.SSH_PORT }}
+  SSH_USERNAME: ${{ secrets.SSH_USERNAME }}
+  API_URL: ${{ secrets.API_URL }}
+jobs:
+  deploy:
+    name: Deploy
+    environment: prod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
+      - name: List files in the repository
+        run: |
+          ls ${{ github.workspace }}
+      - uses: actions/download-artifact@v2
+      - name: Copy bleck into id rsa
+        run: install -m 600 -D /dev/null ~/.ssh/id_rsa
+      - name: See if env vars propagated
+        run: echo "$SSH_HOST"
+      - name: Copy private key into keyfile
+        run: echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+      - name: Scan into known hosts
+        run: ssh-keyscan -H -p "$SSH_PORT" "$SSH_HOST" > ~/.ssh/known_hosts
+      - name: Create env file
+        run: touch ${{ github.workspace}}/.env
+      - name: Write in api url
+        run: echo VUE_APP_API_URL="$API_URL" >> ${{ github.workspace }}/.env
+      - name: Write in postgres username
+      - name: Send updated source to our VPS
+        run: rsync -rav --delete -e 'ssh -p 3732'  ${{ github.workspace }}/  "$SSH_USERNAME"@"$SSH_HOST":/home/"$SSH_USERNAME"/src/game-remix-guesser-frontend/
+      - name: Build new prod
+        run: ssh -p 3732 "${SSH_USERNAME}"@"${SSH_HOST}" "cd src/game-remix-guesser-frontend && nvm use 16 && npm install && npm run build"
+      - name: Move build files to web directory
+        run: ssh -p 3732 "${SSH_USERNAME}"@"${SSH_HOST}" "cd src/game-remix-guesser-frontend && cp -a build/. /home/www-data/grg/
