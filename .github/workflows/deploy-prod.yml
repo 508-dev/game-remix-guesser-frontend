@@ -39,7 +39,6 @@ jobs:
         run: touch ${{ github.workspace}}/.env
       - name: Write in api url
         run: echo VUE_APP_API_URL="$API_URL" >> ${{ github.workspace }}/.env
-      - name: Write in postgres username
       - name: Send updated source to our VPS
         run: rsync -rav --delete -e 'ssh -p 3732'  ${{ github.workspace }}/  "$SSH_USERNAME"@"$SSH_HOST":/home/"$SSH_USERNAME"/src/game-remix-guesser-frontend/
       - name: Build new prod
