@@ -1,8 +1,5 @@
-const API_URL = 'api';
-
-// if (process.env.NODE_ENV !== 'development') {
-//   API_URL = 'https://api-dot-game-remix-guesser.uw.r.appspot.com';
-// }
+// eslint-disable-next-line
+const API_URL = process.env.VUE_APP_API_URL;
 
 // eslint-disable-next-line
 export function fetchApi(url: string, config?: object) {
