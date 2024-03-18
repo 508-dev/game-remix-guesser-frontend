@@ -27,7 +27,7 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss">
+<style scoped>
   .submit-ocremix-id {
     display: flex;
     align-items: center;

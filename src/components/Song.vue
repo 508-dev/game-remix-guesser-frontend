@@ -36,7 +36,7 @@ export default defineComponent({
 });
 
 </script>
-<style lang="scss" scoped>
+<style scoped>
 
 .youtube-wrapper {
   display: none;

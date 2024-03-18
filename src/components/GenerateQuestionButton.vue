@@ -24,7 +24,7 @@ export default defineComponent({
   },
 });
 </script>
-<style scoped lang="scss">
+<style scoped>
   .generate-question {
     display: flex;
     align-items: center;

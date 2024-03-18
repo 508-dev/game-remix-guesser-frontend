@@ -20,11 +20,10 @@ const Maintenance = defineComponent({
 export default Maintenance;
 
 </script>
-<style scoped lang="scss">
-@import '../colors';
+<style scoped>
 
 .title {
-  background-color: $lightCornflowerBlue !important;
+  background-color: var(--light-cornflower-blue) !important;
 }
 
 </style>

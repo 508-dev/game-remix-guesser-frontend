@@ -22,8 +22,7 @@
     </section>
   </div>
 </template>
-<style lang="scss">
-@import '../colors';
+<style>
 .about {
   display: flex;
   justify-content: center;
@@ -35,7 +34,7 @@
 }
 
 a {
-  color: $tulipTree;
+  color: var(--tulip-tree);
   text-decoration: underline;
 }
 </style>

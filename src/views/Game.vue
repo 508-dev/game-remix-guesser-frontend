@@ -10,42 +10,29 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { defineComponent } from 'vue';
+import { useStore } from '../store';
 import Song from '../components/Song.vue';
 import Answers from '../components/Answers.vue';
 import RemixInfo from '../components/RemixInfo.vue';
 
-export default defineComponent({
-  name: 'Game',
-  components: {
-    Song,
-    Answers,
-    RemixInfo,
-  },
-  methods: {
-    getSong() {
-      this.$store.dispatch('getSong');
-    },
-  },
-  computed: {
-    youtubeId() {
-      return this.$store.getters.currentQuestionYoutubeId;
-    },
-    correctAnswer() {
-      return this.$store.getters.correctAnswer;
-    },
-    showQuestion() {
-      // TODO find out how to set computed properties as existing to typescript
-      // eslint-disable-next-line
-      // @ts-ignore
-      return this.youtubeId && !this.correctAnswer;
-    },
-  },
-});
+const store = useStore();
+
+function getSong() {
+  store.getSong();
+}
+
+function correctAnswer() {
+  return store.correctAnswer();
+}
+function showQuestion() {
+  return this.youtubeId && !this.correctAnswer;
+}
+
 
 </script>
-<style lang="scss" scoped>
+<style scoped>
 
 .game {
   height: 80vh;

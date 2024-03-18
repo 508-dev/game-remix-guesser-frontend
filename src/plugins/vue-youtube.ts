@@ -147,7 +147,7 @@ export default {
       host: 'https://www.youtube.com/iframe_api'
     }
 
-    const host = this.nocookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'
+    const host = this.nocookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
 
     this.player = player(this.$el, {
       host,
@@ -157,12 +157,12 @@ export default {
       playerVars: this.playerVars
     })
 
-    this.player.on('ready', this.playerReady)
-    this.player.on('stateChange', this.playerStateChange)
-    this.player.on('error', this.playerError)
+    this.player.on('ready', this.playerReady);
+    this.player.on('stateChange', this.playerStateChange);
+    this.player.on('error', this.playerError);
 
     if (this.resize) {
-      window.addEventListener('resize', this.onResize)
+      window.addEventListener('resize', this.onResize);
     }
 
       //@ts-ignore

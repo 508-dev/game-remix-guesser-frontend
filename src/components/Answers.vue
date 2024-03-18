@@ -1,72 +1,54 @@
 <template>
   <div class="answers nes-container with-title">
     <transition name="slide-fade" mode="out-in">
-    <h3 id="answer-area-title" class="title" :key="titleText">
-      {{titleText}}
-    </h3>
+      <h3 id="answer-area-title" class="title" :key="titleText">
+        {{titleText}}
+      </h3>
     </transition>
     <ul class="answer-list-area" role="radiogroup" aria-labelledby="answer-area-title">
-      <li
-        v-for="choice in choices"
-        :key="choice.public_id"
-      >
+      <li v-for="choice in choices" :key="choice.public_id">
         <label>
-          <input
-            class="nes-radio"
-            type="radio"
-            name="choice"
-            v-model="selectedChoice"
-            :value="choice.public_id" />
+          <input class="nes-radio" type="radio" name="choice" v-model="selectedChoice" :value="choice.public_id" />
           <span>{{choice.origin_game}}</span>
         </label>
       </li>
     </ul>
-    <button
-      class="nes-btn"
-      :class="{'is-disabled': !selectedChoice}"
-      :disabled="!selectedChoice"
-      @click="submitAnswer"
-    >
+    <button class="nes-btn" :class="{ 'is-disabled': !selectedChoice }" :disabled="!selectedChoice"
+      @click="submitAnswer">
       Submit Answer
     </button>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { useStore } from '../store';
+import { ref, computed } from 'vue';
+const store = useStore();
+
+const selectedChoice = ref('');
+const submitted = ref(false);
+const choices = store.currentQuestionChoices
+const titleText = computed(() => {
+  if (this.submitted) {
+    return 'Checking...';
+  }
+  if (this.hasCheckedAnswer) {
+    return 'Sorry, wrong! Which game is this from?';
+  }
+  return 'Which game is this from?';
+})
+const hasCheckedAnswer = store.hasCheckedAnswer;
+
+
+
+function submitAnswer() {
+  store.setHasCheckedAnswer(false);
+  submitted = true;
+  store.submitAnswer();
+},
 
 export default defineComponent({
   name: 'Answers',
-  data() {
-    return {
-      selectedChoice: '',
-      submitted: false,
-    };
-  },
-  methods: {
-    submitAnswer() {
-      this.$store.commit('setHasCheckedAnswer', false);
-      this.submitted = true;
-      this.$store.dispatch('submitAnswer');
-    },
-  },
-  computed: {
-    choices() {
-      return this.$store.getters.currentQuestionChoices;
-    },
-    titleText() {
-      if (this.submitted) {
-        return 'Checking...';
-      }
-      if (this.hasCheckedAnswer) {
-        return 'Sorry, wrong! Which game is this from?';
-      }
-      return 'Which game is this from?';
-    },
-    hasCheckedAnswer() {
-      return this.$store.getters.hasCheckedAnswer;
-    },
-  },
   watch: {
     // Why does a String need Deep????
     selectedChoice: {
@@ -84,8 +66,7 @@ export default defineComponent({
 });
 
 </script>
-<style lang="scss" scoped>
-@import '../colors';
+<style scoped>
 
 .answers {
   margin-top: 30px;
@@ -93,7 +74,7 @@ export default defineComponent({
 
 ul, li {
   list-style-type: none;
-  argin-block-start: 0;
+  margin-block-start: 0;
   margin-block-end: 0;
   margin-inline-start: 0px;
   margin-inline-end: 0px;
@@ -103,7 +84,7 @@ ul, li {
   color: black;
 }
 .title {
-  background-color: $lightCornflowerBlue !important;
+  background-color: var(--light-cornflower-blue) !important;
 }
 .slide-fade-enter-active {
   transition: all .3s ease;
