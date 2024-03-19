@@ -28,7 +28,6 @@ const correctAnswer = computed(() => {
   return store.correctAnswer;
 })
 
-
 </script>
 <style scoped>
 

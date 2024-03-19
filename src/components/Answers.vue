@@ -28,21 +28,23 @@ const store = useStore();
 const selectedChoice = ref('');
 let submitted = ref(false);
 const choices = computed(()=> {return store.currentQuestionChoices});
-console.log(choices)
+const hasCheckedAnswer = computed(() => {
+  return store.hasCheckedAnswer
+});
+
 const titleText = computed(() => {
-  if (submitted) {
+  if (submitted.value) {
     return 'Checking...';
   }
-  if (hasCheckedAnswer) {
+  if (hasCheckedAnswer.value) {
     return 'Sorry, wrong! Which game is this from?';
   }
   return 'Which game is this from?';
 })
-const hasCheckedAnswer = ref(store.hasCheckedAnswer);
 
 function submitAnswer() {
   store.hasCheckedAnswer = false;
-  submitted = true;
+  submitted.value = true;
   store.submitAnswer();
 }
 
@@ -52,7 +54,7 @@ watch(selectedChoice, (newSelection) => {
 
 watch(hasCheckedAnswer, (isChecked) => {
   if (isChecked) {
-    submitted = false;
+    submitted.value = false;
   }
 })
 

@@ -6,7 +6,6 @@
       <Song v-if="showQuestion" :youtubeId="youtubeId" />
       <Answers v-if="showQuestion" />
       <RemixInfo v-if="store.correctAnswer" />
-      {{store.correctAnswer}}
     </div>
   </div>
 </template>
@@ -28,14 +27,9 @@ const youtubeId = computed(()=>{
   return store.currentQuestionYoutubeId;
 });
 
-// const correctAnswer = computed(() => {
-//   return store.correctAnswer;
-// })
-//
 const showQuestion = computed(() => {
-  return youtubeId && !store.correctAnswer;
+  return youtubeId.value && !store.correctAnswer;
 })
-console.log(showQuestion)
 
 
 </script>
