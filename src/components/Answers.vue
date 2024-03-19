@@ -31,44 +31,44 @@
 </template>
 
 <script lang="ts" setup>
-import { useStore } from '../store'
-import { ref, computed, watch } from 'vue'
-const store = useStore()
+import { useStore } from '../store';
+import { ref, computed, watch } from 'vue';
+const store = useStore();
 
-const selectedChoice = ref('')
-let submitted = ref(false)
+const selectedChoice = ref('');
+let submitted = ref(false);
 const choices = computed(() => {
-  return store.currentQuestionChoices
-})
+  return store.currentQuestionChoices;
+});
 const hasCheckedAnswer = computed(() => {
-  return store.hasCheckedAnswer
-})
+  return store.hasCheckedAnswer;
+});
 
 const titleText = computed(() => {
   if (submitted.value) {
-    return 'Checking...'
+    return 'Checking...';
   }
   if (hasCheckedAnswer.value) {
-    return 'Sorry, wrong! Which game is this from?'
+    return 'Sorry, wrong! Which game is this from?';
   }
-  return 'Which game is this from?'
-})
+  return 'Which game is this from?';
+});
 
 function submitAnswer() {
-  store.hasCheckedAnswer = false
-  submitted.value = true
-  store.submitAnswer()
+  store.hasCheckedAnswer = false;
+  submitted.value = true;
+  store.submitAnswer();
 }
 
 watch(selectedChoice, (newSelection) => {
-  store.selectedAnswer = Number(newSelection)
-})
+  store.selectedAnswer = Number(newSelection);
+});
 
 watch(hasCheckedAnswer, (isChecked) => {
   if (isChecked) {
-    submitted.value = false
+    submitted.value = false;
   }
-})
+});
 </script>
 <style scoped>
 .answers {

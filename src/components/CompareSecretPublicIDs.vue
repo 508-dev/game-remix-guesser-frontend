@@ -6,7 +6,7 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'CompareIDs',
@@ -14,18 +14,18 @@ export default defineComponent({
     return {
       secretId: '',
       publicId: ''
-    }
+    };
   },
   methods: {
     submitIds() {
       const data = {
         public_id: Number(this.publicId),
         secret_id: Number(this.secretId)
-      }
-      this.$store.dispatch('checkAnswer', data)
+      };
+      this.$store.dispatch('checkAnswer', data);
     }
   }
-})
+});
 </script>
 <style scoped>
 .submit-ocremix-id {

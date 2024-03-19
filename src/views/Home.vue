@@ -24,17 +24,17 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
 
 export default defineComponent({
   name: 'Home',
   components: {},
   methods: {
     goToGame() {
-      this.$router.push({ name: 'Game' })
+      this.$router.push({ name: 'Game' });
     }
   }
-})
+});
 </script>
 <style scoped>
 .home {

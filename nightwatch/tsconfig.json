@@ -6,13 +6,13 @@
     "tsBuildInfoFile": "../node_modules/.tmp/tsconfig.nightwatch.tsbuildinfo",
 
     "target": "ESNext",
-    "module": "commonjs",
+    "module": "es2022",
     "moduleResolution": "node",
     "rootDir": "../",
     "lib": ["ESNext", "dom"],
     "types": ["nightwatch"]
   },
-  "include": ["../node_modules/@nightwatch/**/*", "../src/components/**/*", "../tests/e2e/**/*"],
+  "include": ["../node_modules/@nightwatch/**/*", "../src/**/*", "../tests/e2e/**/*"],
   "ts-node": {
     "transpileOnly": true
   },
