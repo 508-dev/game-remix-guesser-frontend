@@ -60,8 +60,6 @@ export const useStore = defineStore('store', {
       }
       return null;
     },
-    correctAnswer: (state: State): CorrectAnswer | null => state.correctAnswer,
-    hasCheckedAnswer: (state: State): boolean => state.hasCheckedAnswer,
   },
   actions: {
     async getSong() {

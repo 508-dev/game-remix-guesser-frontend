@@ -20,50 +20,41 @@
   </div>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { useStore } from '../store';
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
 const store = useStore();
 
 const selectedChoice = ref('');
-const submitted = ref(false);
-const choices = store.currentQuestionChoices
+let submitted = ref(false);
+const choices = computed(()=> {return store.currentQuestionChoices});
+console.log(choices)
 const titleText = computed(() => {
-  if (this.submitted) {
+  if (submitted) {
     return 'Checking...';
   }
-  if (this.hasCheckedAnswer) {
+  if (hasCheckedAnswer) {
     return 'Sorry, wrong! Which game is this from?';
   }
   return 'Which game is this from?';
 })
-const hasCheckedAnswer = store.hasCheckedAnswer;
-
-
+const hasCheckedAnswer = ref(store.hasCheckedAnswer);
 
 function submitAnswer() {
-  store.setHasCheckedAnswer(false);
+  store.hasCheckedAnswer = false;
   submitted = true;
   store.submitAnswer();
-},
+}
 
-export default defineComponent({
-  name: 'Answers',
-  watch: {
-    // Why does a String need Deep????
-    selectedChoice: {
-      handler() {
-        this.$store.commit('setSelectedChoice', Number(this.selectedChoice));
-      },
-      deep: true,
-    },
-    hasCheckedAnswer() {
-      if (this.hasCheckedAnswer) {
-        this.submitted = false;
-      }
-    },
-  },
+watch(selectedChoice, (newSelection) => {
+  store.selectedAnswer = Number(newSelection);
 });
+
+watch(hasCheckedAnswer, (isChecked) => {
+  if (isChecked) {
+    submitted = false;
+  }
+})
 
 </script>
 <style scoped>

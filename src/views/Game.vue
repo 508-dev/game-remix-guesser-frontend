@@ -5,13 +5,14 @@
 
       <Song v-if="showQuestion" :youtubeId="youtubeId" />
       <Answers v-if="showQuestion" />
-      <RemixInfo v-if="correctAnswer" />
+      <RemixInfo v-if="store.correctAnswer" />
+      {{store.correctAnswer}}
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { defineComponent } from 'vue';
+import { computed } from 'vue';
 import { useStore } from '../store';
 import Song from '../components/Song.vue';
 import Answers from '../components/Answers.vue';
@@ -23,12 +24,18 @@ function getSong() {
   store.getSong();
 }
 
-function correctAnswer() {
-  return store.correctAnswer();
-}
-function showQuestion() {
-  return this.youtubeId && !this.correctAnswer;
-}
+const youtubeId = computed(()=>{
+  return store.currentQuestionYoutubeId;
+});
+
+// const correctAnswer = computed(() => {
+//   return store.correctAnswer;
+// })
+//
+const showQuestion = computed(() => {
+  return youtubeId && !store.correctAnswer;
+})
+console.log(showQuestion)
 
 
 </script>
