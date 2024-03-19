@@ -7,6 +7,7 @@ import nightwatchPlugin from 'vite-plugin-nightwatch'
 const viteEnv = {}
 Object.keys(process.env).forEach((key) => {
   if (key.startsWith(`VITE_`)) {
+    // @ts-ignore
     viteEnv[`import.meta.env.${key}`] = process.env[key]
   }
 })
