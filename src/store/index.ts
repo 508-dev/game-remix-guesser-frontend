@@ -1,32 +1,51 @@
-import { createStore } from 'vuex';
-import { QuestionPackage, Choice, CorrectAnswer } from './types';
+// import { QuestionPackage, Choice, CorrectAnswer } from './types.ts';
 import { fetchApi } from './fetch';
 
+import { defineStore } from 'pinia';
+export interface CorrectAnswer {
+  origin_game: string;
+  remix_artist: string;
+  ocremix_remix_url: string;
+  original_song_title: string;
+}
+
+export interface Choice {
+  origin_game: string;
+  public_id: number;
+}
+
+export interface Question {
+  remix_youtube_url: string;
+  secret_id: number;
+}
+
+export interface QuestionPackage {
+  choices: Choice[];
+  question: Question;
+}
+
 // In which I question whether typescript is really worth the headache
-// ts-ignore
-function getYoutubeIdFromUrl(url: any) {
-  // eslint-disable-next-line
-  // ts-ignore
+function getYoutubeIdFromUrl(url: string) {
   const blah = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-  // ts-ignore
-  // eslint-disable-next-line
-  return (blah[2] !== undefined) ? blah[2].split(/[^0-9a-z_\-]/i)[0] : blah[0];
+  return blah[2] !== undefined ? blah[2].split(/[^0-9a-z_\-]/i)[0] : blah[0];
 }
 
-export class State {
-  questionPackage: QuestionPackage | null = null;
-
-  selectedAnswer: number | null = null;
-
-  correctAnswer: CorrectAnswer | null = null;
-
-  hasCheckedAnswer = false;
+export interface State {
+  questionPackage: QuestionPackage | null;
+  selectedAnswer: number | null;
+  correctAnswer: CorrectAnswer | null;
+  hasCheckedAnswer: boolean;
 }
 
-// export interface StateInterface extends State {};
-
-export default createStore({
-  state: new State(),
+export const useStore = defineStore('store', {
+  state: (): State => {
+    return {
+      questionPackage: null,
+      selectedAnswer: null,
+      correctAnswer: null,
+      hasCheckedAnswer: false
+    };
+  },
   getters: {
     currentQuestionYoutubeId: (state: State): string | null => {
       if (state.questionPackage?.question?.remix_youtube_url) {
@@ -39,75 +58,40 @@ export default createStore({
         return state.questionPackage.choices;
       }
       return null;
-    },
-    correctAnswer: (state: State): CorrectAnswer | null => state.correctAnswer,
-    hasCheckedAnswer: (state: State): boolean => state.hasCheckedAnswer,
-  },
-  mutations: {
-    setQuestionPackage(state: State, payload) {
-      state.questionPackage = payload;
-    },
-    setSelectedChoice(state: State, choice: number) {
-      state.selectedAnswer = choice;
-    },
-    clearGameState(state: State) {
-      state.selectedAnswer = null;
-      state.correctAnswer = null;
-      state.questionPackage = null;
-      state.hasCheckedAnswer = false;
-    },
-    setCorrectAnswer(state: State, answer: CorrectAnswer) {
-      state.correctAnswer = answer;
-    },
-    setHasCheckedAnswer(state: State, hasChecked: boolean) {
-      state.hasCheckedAnswer = hasChecked;
-    },
+    }
   },
   actions: {
-    async getRemixes() {
-      const response = await fetchApi('/remixes/');
-      const responseJson = await response.json();
-      console.log(responseJson);
-    },
-    // Lol how do you do no first argument to an action in vuex
-    // without angering the linter or typescript?
-    // eslint-disable-next-line
-    async submitRemixForParsing({}, id: string) {
-      const response = await fetchApi(`/parse/${id}`);
-      const responseJson = await response.json();
-      console.log(responseJson);
-    },
-    async getSong({ commit }) {
-      commit('clearGameState');
+    async getSong() {
+      this.selectedAnswer = null;
+      this.correctAnswer = null;
+      this.questionPackage = null;
+      this.hasCheckedAnswer = false;
+
       const response = await fetchApi('/game/', {});
       const responseJson = await response.json();
-      commit('setQuestionPackage', responseJson);
+      this.questionPackage = responseJson;
     },
-    async seedDB() {
-      const response = await fetchApi('/seed/');
-      const responseJson = await response.json();
-      console.log(responseJson);
-    },
-    async submitAnswer({ state, commit }) {
-      commit('setHasCheckedAnswer', false);
-      const secret_id = state.questionPackage?.question.secret_id;
-      const public_id = state.selectedAnswer;
+    async submitAnswer() {
+      this.correctAnswer = null;
+
+      const secret_id = this.questionPackage?.question.secret_id;
+      const public_id = this.selectedAnswer;
+
       const response = await fetchApi('/game/', {
         method: 'POST',
         mode: 'cors',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           public_id,
-          secret_id,
-        }),
+          secret_id
+        })
       });
+
       const responseJson = await response.json();
-      commit('setCorrectAnswer', responseJson);
-      commit('setHasCheckedAnswer', true);
-    },
-  },
-  modules: {
-  },
+      this.correctAnswer = responseJson;
+      this.hasCheckedAnswer = true;
+    }
+  }
 });

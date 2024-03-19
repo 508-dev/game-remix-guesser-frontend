@@ -1,14 +1,14 @@
 /* tslint:disable */
 // @ts-nocheck
-import { h } from 'vue'
+import { h } from 'vue';
 import player from 'youtube-player';
 
-const UNSTARTED = -1
-const ENDED = 0
-const PLAYING = 1
-const PAUSED = 2
-const BUFFERING = 3
-const CUED = 5
+const UNSTARTED = -1;
+const ENDED = 0;
+const PLAYING = 1;
+const PAUSED = 2;
+const BUFFERING = 3;
+const CUED = 5;
 
 export default {
   name: 'Youtube',
@@ -43,7 +43,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       player: {},
       events: {
@@ -55,99 +55,94 @@ export default {
         [CUED]: 'cued'
       },
       resizeTimeout: null
-    }
+    };
   },
   computed: {
-    aspectRatio () {
-      return this.width / this.height
+    aspectRatio() {
+      return this.width / this.height;
     }
   },
   methods: {
-    playerReady (e) {
-      this.$emit('ready', e.target)
+    playerReady(e) {
+      this.$emit('ready', e.target);
     },
-    playerStateChange (e) {
+    playerStateChange(e) {
       if (e.data !== null && e.data !== UNSTARTED) {
-        this.$emit(this.events[e.data], e.target)
+        this.$emit(this.events[e.data], e.target);
       }
     },
-    playerError (e) {
-      this.$emit('error', e.target)
+    playerError(e) {
+      this.$emit('error', e.target);
     },
-    updatePlayer (videoId) {
+    updatePlayer(videoId) {
       if (!videoId) {
-        this.player.stopVideo()
-        return
+        this.player.stopVideo();
+        return;
       }
 
-      const params = { videoId: videoId }
+      const params = { videoId: videoId };
 
       if (typeof this.playerVars.start === 'number') {
-        params.startSeconds = this.playerVars.start
+        params.startSeconds = this.playerVars.start;
       }
 
       if (typeof this.playerVars.end === 'number') {
-        params.endSeconds = this.playerVars.end
+        params.endSeconds = this.playerVars.end;
       }
 
       if (this.playerVars.autoplay === 1) {
-        this.player.loadVideoById(params)
-        return
+        this.player.loadVideoById(params);
+        return;
       }
 
-      this.player.cueVideoById(params)
+      this.player.cueVideoById(params);
     },
-    resizeProportionally () {
-      this.player.getIframe().then(iframe => {
-        const width = this.fitParent
-          ? iframe.parentElement.offsetWidth
-          : iframe.offsetWidth
-        const height = width / this.aspectRatio
-        this.player.setSize(width, height)
-      })
+    resizeProportionally() {
+      this.player.getIframe().then((iframe) => {
+        const width = this.fitParent ? iframe.parentElement.offsetWidth : iframe.offsetWidth;
+        const height = width / this.aspectRatio;
+        this.player.setSize(width, height);
+      });
     },
-    onResize () {
-      clearTimeout(this.resizeTimeout)
-      this.resizeTimeout = setTimeout(
-        this.resizeProportionally,
-        this.resizeDelay
-      )
+    onResize() {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(this.resizeProportionally, this.resizeDelay);
     }
   },
   watch: {
     videoId: 'updatePlayer',
-    resize (val) {
+    resize(val) {
       if (val) {
-        window.addEventListener('resize', this.onResize)
-        this.resizeProportionally()
+        window.addEventListener('resize', this.onResize);
+        this.resizeProportionally();
       } else {
-        window.removeEventListener('resize', this.onResize)
-        this.player.setSize(this.width, this.height)
+        window.removeEventListener('resize', this.onResize);
+        this.player.setSize(this.width, this.height);
       }
     },
-    width (val) {
-      this.player.setSize(val, this.height)
+    width(val) {
+      this.player.setSize(val, this.height);
     },
-    height (val) {
-      this.player.setSize(this.width, val)
+    height(val) {
+      this.player.setSize(this.width, val);
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.player !== null && this.player.destroy) {
-      this.player.destroy()
-      delete this.player
+      this.player.destroy();
+      delete this.player;
     }
 
     if (this.resize) {
-      window.removeEventListener('resize', this.onResize)
+      window.removeEventListener('resize', this.onResize);
     }
   },
-  mounted () {
+  mounted() {
     window.YTConfig = {
       host: 'https://www.youtube.com/iframe_api'
-    }
+    };
 
-    const host = this.nocookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'
+    const host = this.nocookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
 
     this.player = player(this.$el, {
       host,
@@ -155,23 +150,23 @@ export default {
       height: this.height,
       videoId: this.videoId,
       playerVars: this.playerVars
-    })
+    });
 
-    this.player.on('ready', this.playerReady)
-    this.player.on('stateChange', this.playerStateChange)
-    this.player.on('error', this.playerError)
+    this.player.on('ready', this.playerReady);
+    this.player.on('stateChange', this.playerStateChange);
+    this.player.on('error', this.playerError);
 
     if (this.resize) {
-      window.addEventListener('resize', this.onResize)
+      window.addEventListener('resize', this.onResize);
     }
 
-      //@ts-ignore
+    //@ts-ignore
     if (this.fitParent) {
       //@ts-ignore
-      this.resizeProportionally()
+      this.resizeProportionally();
     }
   },
   render() {
-    return h('div')
+    return h('div');
   }
-}
+};

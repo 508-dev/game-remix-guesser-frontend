@@ -5,48 +5,33 @@
 
       <Song v-if="showQuestion" :youtubeId="youtubeId" />
       <Answers v-if="showQuestion" />
-      <RemixInfo v-if="correctAnswer" />
+      <RemixInfo v-if="store.correctAnswer" />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import { defineComponent } from 'vue';
+<script lang="ts" setup>
+import { computed } from 'vue';
+import { useStore } from '../store';
 import Song from '../components/Song.vue';
 import Answers from '../components/Answers.vue';
 import RemixInfo from '../components/RemixInfo.vue';
 
-export default defineComponent({
-  name: 'Game',
-  components: {
-    Song,
-    Answers,
-    RemixInfo,
-  },
-  methods: {
-    getSong() {
-      this.$store.dispatch('getSong');
-    },
-  },
-  computed: {
-    youtubeId() {
-      return this.$store.getters.currentQuestionYoutubeId;
-    },
-    correctAnswer() {
-      return this.$store.getters.correctAnswer;
-    },
-    showQuestion() {
-      // TODO find out how to set computed properties as existing to typescript
-      // eslint-disable-next-line
-      // @ts-ignore
-      return this.youtubeId && !this.correctAnswer;
-    },
-  },
+const store = useStore();
+
+function getSong() {
+  store.getSong();
+}
+
+const youtubeId = computed(() => {
+  return store.currentQuestionYoutubeId;
 });
 
+const showQuestion = computed(() => {
+  return youtubeId.value && !store.correctAnswer;
+});
 </script>
-<style lang="scss" scoped>
-
+<style scoped>
 .game {
   height: 80vh;
   display: flex;
@@ -60,5 +45,4 @@ export default defineComponent({
     margin-bottom: 40px;
   }
 }
-
 </style>

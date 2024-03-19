@@ -1,29 +1,30 @@
+<script setup lang="ts">
+import { RouterLink, RouterView } from 'vue-router';
+</script>
 <template>
   <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <RouterLink to="/">Home</RouterLink> |
+    <RouterLink to="/about">About</RouterLink>
   </div>
-  <router-view/>
+  <router-view />
   <div class="grass"></div>
   <div class="ground"></div>
 </template>
 
-<style lang="scss">
-@import 'colors';
-
+<style>
 * {
-  font-family: "Press Start 2P";
+  font-family: 'Press Start 2P';
 }
 body {
-    background-color: $saddleBrown;
+  background-color: var(--saddle-brown);
 }
 .grass {
-    height: 2vh;
-    background-color: $lawnGreen;
+  height: 2vh;
+  background-color: var(--lawn-green);
 }
 .ground {
-    height: 2vh;
-    background-color: $darkGreen;
+  height: 2vh;
+  background-color: var(--dark-green);
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -31,8 +32,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  background-color: $lightCornflowerBlue;
-
+  background-color: var(--light-cornflower-blue);
 }
 
 #nav {
@@ -43,8 +43,8 @@ body {
     color: #2c3e50;
 
     &.router-link-exact-active {
-      color: $harleyDavidsonOrange;
-      border-bottom: 4px double $harleyDavidsonOrange;
+      color: var(--harley-davidson-orange);
+      border-bottom: 4px double var(--harley-davidson-orange);
     }
   }
 }

@@ -11,31 +11,31 @@ export default defineComponent({
   name: 'SubmitOcremixId',
   data() {
     return {
-      ocremixId: '',
+      ocremixId: ''
     };
   },
   methods: {
     submitId() {
       this.$store.dispatch('submitRemixForParsing', this.ocremixId);
-    },
-  },
-});
-</script>
-<style scoped lang="scss">
-  .submit-ocremix-id {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-flow: column;
-    * {
-      margin: 5px;
-    }
-
-    input {
-      padding: 5px;
-    }
-    button {
-      height: 2em;
     }
   }
+});
+</script>
+<style scoped>
+.submit-ocremix-id {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  * {
+    margin: 5px;
+  }
+
+  input {
+    padding: 5px;
+  }
+  button {
+    height: 2em;
+  }
+}
 </style>
