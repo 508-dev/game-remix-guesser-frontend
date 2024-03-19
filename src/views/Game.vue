@@ -11,30 +11,27 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useStore } from '../store';
-import Song from '../components/Song.vue';
-import Answers from '../components/Answers.vue';
-import RemixInfo from '../components/RemixInfo.vue';
+import { computed } from 'vue'
+import { useStore } from '../store'
+import Song from '../components/Song.vue'
+import Answers from '../components/Answers.vue'
+import RemixInfo from '../components/RemixInfo.vue'
 
-const store = useStore();
+const store = useStore()
 
 function getSong() {
-  store.getSong();
+  store.getSong()
 }
 
-const youtubeId = computed(()=>{
-  return store.currentQuestionYoutubeId;
-});
-
-const showQuestion = computed(() => {
-  return youtubeId.value && !store.correctAnswer;
+const youtubeId = computed(() => {
+  return store.currentQuestionYoutubeId
 })
 
-
+const showQuestion = computed(() => {
+  return youtubeId.value && !store.correctAnswer
+})
 </script>
 <style scoped>
-
 .game {
   height: 80vh;
   display: flex;
@@ -48,5 +45,4 @@ const showQuestion = computed(() => {
     margin-bottom: 40px;
   }
 }
-
 </style>

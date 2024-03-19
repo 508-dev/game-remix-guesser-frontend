@@ -5,25 +5,22 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
-import SubmitOcremixId from '../components/SubmitOcremixId.vue';
-import GenerateQuestionButton from '../components/GenerateQuestionButton.vue';
+import { defineComponent } from 'vue'
+import SubmitOcremixId from '../components/SubmitOcremixId.vue'
+import GenerateQuestionButton from '../components/GenerateQuestionButton.vue'
 
 const Maintenance = defineComponent({
   name: 'Maintenance',
   components: {
     SubmitOcremixId,
-    GenerateQuestionButton,
-  },
-});
+    GenerateQuestionButton
+  }
+})
 
-export default Maintenance;
-
+export default Maintenance
 </script>
 <style scoped>
-
 .title {
   background-color: var(--light-cornflower-blue) !important;
 }
-
 </style>

@@ -6,26 +6,25 @@ import { RouterLink, RouterView } from 'vue-router'
     <RouterLink to="/">Home</RouterLink> |
     <RouterLink to="/about">About</RouterLink>
   </div>
-  <router-view/>
+  <router-view />
   <div class="grass"></div>
   <div class="ground"></div>
 </template>
 
 <style>
-
 * {
-  font-family: "Press Start 2P";
+  font-family: 'Press Start 2P';
 }
 body {
-    background-color: var(--saddle-brown);
+  background-color: var(--saddle-brown);
 }
 .grass {
-    height: 2vh;
-    background-color: var(--lawn-green);
+  height: 2vh;
+  background-color: var(--lawn-green);
 }
 .ground {
-    height: 2vh;
-    background-color: var(--dark-green);
+  height: 2vh;
+  background-color: var(--dark-green);
 }
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -34,7 +33,6 @@ body {
   text-align: center;
   color: #2c3e50;
   background-color: var(--light-cornflower-blue);
-
 }
 
 #nav {

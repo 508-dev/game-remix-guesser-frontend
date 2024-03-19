@@ -1,24 +1,18 @@
 <template>
   <div class="about">
     <section class="nes-container">
+      <p>This game is a personal project made by Caleb.</p>
       <p>
-        This game is a personal project made by Caleb.
+        He made it after having a really fun night hanging out with his girlfriend. One of them
+        would play a videogame song on youtube, and the other would try to guess what game the song
+        was from.
       </p>
-      <p>
-        He made it after having a really fun night hanging
-        out with his girlfriend. One of them would play a videogame
-        song on youtube, and the other would try to guess
-        what game the song was from.
-      </p>
-      <p>
-        Caleb has a <a href="https://blog.calebjay.com">blog</a>.
-      </p>
+      <p>Caleb has a <a href="https://blog.calebjay.com">blog</a>.</p>
       <p>
         He also has a
-        <a href="https://www.youtube.com/channel/UCR2K9vyQEBb4qUyunijtBHg">
-          youtube</a><router-link to="/maintenance">.</router-link>
+        <a href="https://www.youtube.com/channel/UCR2K9vyQEBb4qUyunijtBHg"> youtube</a
+        ><router-link to="/maintenance">.</router-link>
       </p>
-
     </section>
   </div>
 </template>

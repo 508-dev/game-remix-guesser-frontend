@@ -1,7 +1,7 @@
 <template>
   <div class="remix-info">
     <div class="info-container nes-container with-title">
-      <h3 class="title">Correct! </h3>
+      <h3 class="title">Correct!</h3>
       <dl>
         <dt>Origin Game</dt>
         <dd>{{ correctAnswer.origin_game }}</dd>
@@ -20,19 +20,16 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed } from 'vue';
-import { useStore } from '../store';
-const store = useStore();
+import { computed } from 'vue'
+import { useStore } from '../store'
+const store = useStore()
 
 const correctAnswer = computed(() => {
-  return store.correctAnswer;
+  return store.correctAnswer
 })
-
 </script>
 <style scoped>
-
 .title {
   background-color: var(--light-cornflower-blue) !important;
 }
-
 </style>

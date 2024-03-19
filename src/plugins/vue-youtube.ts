@@ -1,7 +1,7 @@
 /* tslint:disable */
 // @ts-nocheck
 import { h } from 'vue'
-import player from 'youtube-player';
+import player from 'youtube-player'
 
 const UNSTARTED = -1
 const ENDED = 0
@@ -43,7 +43,7 @@ export default {
       default: false
     }
   },
-  data () {
+  data() {
     return {
       player: {},
       events: {
@@ -58,23 +58,23 @@ export default {
     }
   },
   computed: {
-    aspectRatio () {
+    aspectRatio() {
       return this.width / this.height
     }
   },
   methods: {
-    playerReady (e) {
+    playerReady(e) {
       this.$emit('ready', e.target)
     },
-    playerStateChange (e) {
+    playerStateChange(e) {
       if (e.data !== null && e.data !== UNSTARTED) {
         this.$emit(this.events[e.data], e.target)
       }
     },
-    playerError (e) {
+    playerError(e) {
       this.$emit('error', e.target)
     },
-    updatePlayer (videoId) {
+    updatePlayer(videoId) {
       if (!videoId) {
         this.player.stopVideo()
         return
@@ -97,26 +97,21 @@ export default {
 
       this.player.cueVideoById(params)
     },
-    resizeProportionally () {
-      this.player.getIframe().then(iframe => {
-        const width = this.fitParent
-          ? iframe.parentElement.offsetWidth
-          : iframe.offsetWidth
+    resizeProportionally() {
+      this.player.getIframe().then((iframe) => {
+        const width = this.fitParent ? iframe.parentElement.offsetWidth : iframe.offsetWidth
         const height = width / this.aspectRatio
         this.player.setSize(width, height)
       })
     },
-    onResize () {
+    onResize() {
       clearTimeout(this.resizeTimeout)
-      this.resizeTimeout = setTimeout(
-        this.resizeProportionally,
-        this.resizeDelay
-      )
+      this.resizeTimeout = setTimeout(this.resizeProportionally, this.resizeDelay)
     }
   },
   watch: {
     videoId: 'updatePlayer',
-    resize (val) {
+    resize(val) {
       if (val) {
         window.addEventListener('resize', this.onResize)
         this.resizeProportionally()
@@ -125,14 +120,14 @@ export default {
         this.player.setSize(this.width, this.height)
       }
     },
-    width (val) {
+    width(val) {
       this.player.setSize(val, this.height)
     },
-    height (val) {
+    height(val) {
       this.player.setSize(this.width, val)
     }
   },
-  beforeUnmount () {
+  beforeUnmount() {
     if (this.player !== null && this.player.destroy) {
       this.player.destroy()
       delete this.player
@@ -142,12 +137,12 @@ export default {
       window.removeEventListener('resize', this.onResize)
     }
   },
-  mounted () {
+  mounted() {
     window.YTConfig = {
       host: 'https://www.youtube.com/iframe_api'
     }
 
-    const host = this.nocookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com';
+    const host = this.nocookie ? 'https://www.youtube-nocookie.com' : 'https://www.youtube.com'
 
     this.player = player(this.$el, {
       host,
@@ -157,15 +152,15 @@ export default {
       playerVars: this.playerVars
     })
 
-    this.player.on('ready', this.playerReady);
-    this.player.on('stateChange', this.playerStateChange);
-    this.player.on('error', this.playerError);
+    this.player.on('ready', this.playerReady)
+    this.player.on('stateChange', this.playerStateChange)
+    this.player.on('error', this.playerError)
 
     if (this.resize) {
-      window.addEventListener('resize', this.onResize);
+      window.addEventListener('resize', this.onResize)
     }
 
-      //@ts-ignore
+    //@ts-ignore
     if (this.fitParent) {
       //@ts-ignore
       this.resizeProportionally()

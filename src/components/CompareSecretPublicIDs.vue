@@ -6,42 +6,42 @@
   </div>
 </template>
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
   name: 'CompareIDs',
   data() {
     return {
       secretId: '',
-      publicId: '',
-    };
+      publicId: ''
+    }
   },
   methods: {
     submitIds() {
       const data = {
         public_id: Number(this.publicId),
-        secret_id: Number(this.secretId),
-      };
-      this.$store.dispatch('checkAnswer', data);
-    },
-  },
-});
-</script>
-<style scoped>
-  .submit-ocremix-id {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-flow: column;
-    * {
-      margin: 5px;
-    }
-
-    input {
-      padding: 5px;
-    }
-    button {
-      height: 2em;
+        secret_id: Number(this.secretId)
+      }
+      this.$store.dispatch('checkAnswer', data)
     }
   }
+})
+</script>
+<style scoped>
+.submit-ocremix-id {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-flow: column;
+  * {
+    margin: 5px;
+  }
+
+  input {
+    padding: 5px;
+  }
+  button {
+    height: 2em;
+  }
+}
 </style>
