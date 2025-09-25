@@ -14,7 +14,12 @@
           </a>
         </dd>
         <dt>Remix Artist</dt>
-        <dd>{{ correctAnswer.remix_artist }}</dd>
+        <dd>
+          <a v-if="artistUrl" :href="artistUrl" target="_blank" rel="noopener noreferrer">
+            {{ correctAnswer.remix_artist }}
+          </a>
+          <span v-else>{{ correctAnswer.remix_artist }}</span>
+        </dd>
       </dl>
     </div>
   </div>
@@ -26,6 +31,19 @@ const store = useStore();
 
 const correctAnswer = computed(() => {
   return store.correctAnswer;
+});
+
+const artistUrl = computed(() => {
+  const ca = correctAnswer.value;
+  if (!ca) return null;
+
+  const url = ca.remix_artist_ocremix_url as string | undefined;
+  if (url && url.length > 0) {
+    if (url.startsWith('http')) return url;
+    // Normalize relative OCRemix paths like "/artist/4279/djpretzel"
+    return `https://ocremix.org${url.startsWith('/') ? url : '/' + url}`;
+  }
+  return null;
 });
 </script>
 <style scoped>
