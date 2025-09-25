@@ -3,7 +3,7 @@
     <div class="play-area">
       <button @click="getSong" class="get-song nes-btn">Get a Song</button>
 
-      <Song v-if="showQuestion" :youtubeId="youtubeId" />
+      <Song v-if="youtubeId" :youtubeId="youtubeId" />
       <Answers v-if="showQuestion" />
       <RemixInfo v-if="store.correctAnswer" />
     </div>
