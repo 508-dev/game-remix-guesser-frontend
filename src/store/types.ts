@@ -3,6 +3,7 @@ export interface CorrectAnswer {
   remix_artist: string;
   ocremix_remix_url: string;
   original_song_title: string;
+  remix_artist_ocremix_url?: string;
 }
 
 export interface Choice {
