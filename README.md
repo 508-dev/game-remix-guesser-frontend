@@ -25,7 +25,7 @@ npm install
 Have the SPA run on your machine locally. Run like this, the server will update on any local file change.
 
 ```
-npm run serve
+npm run dev
 ```
 
 ### Compile and minify for production

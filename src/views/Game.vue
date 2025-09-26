@@ -11,7 +11,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
+import { computed, onMounted } from 'vue';
 import { useStore } from '../store';
 import Song from '../components/Song.vue';
 import Answers from '../components/Answers.vue';
@@ -22,6 +22,12 @@ const store = useStore();
 function getSong() {
   store.getSong();
 }
+
+onMounted(() => {
+  if (!store.questionPackage) {
+    store.getSong();
+  }
+});
 
 const youtubeId = computed(() => {
   return store.currentQuestionYoutubeId;
