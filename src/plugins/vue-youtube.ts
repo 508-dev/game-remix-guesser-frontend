@@ -15,6 +15,12 @@ type PlayerEvent = {
   data?: number | null;
 };
 
+type PlayerProperties = {
+  videoId: string;
+  startSeconds?: number;
+  endSeconds?: number;
+};
+
 export default defineComponent({
   name: 'Youtube',
   props: {
@@ -74,7 +80,7 @@ export default defineComponent({
     playerStateChange(e: PlayerEvent) {
       if (e.data !== null && e.data !== undefined && e.data !== UNSTARTED) {
         const eventName = this.events[e.data];
-        this.$emit(eventName as any, e.target);
+        eventName && this.$emit(eventName as any, e.target); // guard against events not anticipated by the events map. only fire if eventName is defined.
       }
     },
     playerError(e: PlayerEvent) {
@@ -88,9 +94,9 @@ export default defineComponent({
         return;
       }
 
-      const params = { videoId: videoId, startSeconds: 0, endSeconds: 0 };
+      const params: PlayerProperties = { videoId };
 
-      if (typeof (this.playerVars as any).start === 'number') {
+      if (typeof this.playerVars.start === 'number') {
         params.startSeconds = this.playerVars.start;
       }
 
@@ -174,6 +180,7 @@ export default defineComponent({
       this.resizeProportionally();
     }
   },
+  expose: ['player'],
   render() {
     return h('div');
   }
