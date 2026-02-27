@@ -1,33 +1,12 @@
-// import { QuestionPackage, Choice, CorrectAnswer } from './types.ts';
 import { fetchApi } from './fetch';
+import type { Choice, CorrectAnswer, QuestionPackage } from './types';
 
 import { defineStore } from 'pinia';
-export interface CorrectAnswer {
-  origin_game: string;
-  remix_artist: string;
-  ocremix_remix_url: string;
-  original_song_title: string;
-}
-
-export interface Choice {
-  origin_game: string;
-  public_id: number;
-}
-
-export interface Question {
-  remix_youtube_url: string;
-  secret_id: number;
-}
-
-export interface QuestionPackage {
-  choices: Choice[];
-  question: Question;
-}
 
 // In which I question whether typescript is really worth the headache
 function getYoutubeIdFromUrl(url: string) {
   const blah = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-  return blah[2] !== undefined ? blah[2].split(/[^0-9a-z_\-]/i)[0] : blah[0];
+  return blah[2] !== undefined ? blah[2].split(/[^0-9a-z_-]/i)[0] : blah[0];
 }
 
 export interface State {
@@ -61,6 +40,14 @@ export const useStore = defineStore('store', {
     }
   },
   actions: {
+    async submitRemixForParsing(id: string) {
+      const response = await fetchApi(`/parse/${id}`);
+      return response.json();
+    },
+    async seedDB() {
+      const response = await fetchApi('/seed/');
+      return response.json();
+    },
     async getSong() {
       this.selectedAnswer = null;
       this.correctAnswer = null;
@@ -70,6 +57,24 @@ export const useStore = defineStore('store', {
       const response = await fetchApi('/game/', {});
       const responseJson = await response.json();
       this.questionPackage = responseJson;
+    },
+    async checkAnswer(payload: { public_id: number; secret_id: number }) {
+      this.correctAnswer = null;
+      this.hasCheckedAnswer = false;
+
+      const response = await fetchApi('/game/', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const responseJson = await response.json();
+      this.correctAnswer = responseJson;
+      this.hasCheckedAnswer = true;
+      return responseJson;
     },
     async submitAnswer() {
       this.correctAnswer = null;
