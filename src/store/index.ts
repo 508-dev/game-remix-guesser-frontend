@@ -9,6 +9,36 @@ function getYoutubeIdFromUrl(url: string) {
   return blah[2] !== undefined ? blah[2].split(/[^0-9a-z_-]/i)[0] : blah[0];
 }
 
+async function throwIfNotOk(response: Response) {
+  if (response.ok) return;
+
+  let details = '';
+  try {
+    const contentType = response.headers.get('content-type') ?? '';
+    if (contentType.includes('application/json')) {
+      const payload: unknown = await response.json();
+      if (typeof payload === 'string') {
+        details = payload;
+      } else if (payload && typeof payload === 'object') {
+        const objectPayload = payload as Record<string, unknown>;
+        const message = objectPayload.message ?? objectPayload.error ?? objectPayload.detail;
+        details = typeof message === 'string' ? message : JSON.stringify(payload);
+      }
+    } else {
+      details = await response.text();
+    }
+  } catch {
+    details = '';
+  }
+
+  const statusText = response.statusText || 'Request Failed';
+  throw new Error(
+    details
+      ? `HTTP ${response.status} ${statusText}: ${details}`
+      : `HTTP ${response.status} ${statusText}`
+  );
+}
+
 export interface State {
   questionPackage: QuestionPackage | null;
   selectedAnswer: number | null;
@@ -42,10 +72,12 @@ export const useStore = defineStore('store', {
   actions: {
     async submitRemixForParsing(id: string) {
       const response = await fetchApi(`/parse/${id}`);
+      await throwIfNotOk(response);
       return response.json();
     },
     async seedDB() {
       const response = await fetchApi('/seed/');
+      await throwIfNotOk(response);
       return response.json();
     },
     async getSong() {
@@ -71,6 +103,7 @@ export const useStore = defineStore('store', {
         body: JSON.stringify(payload)
       });
 
+      await throwIfNotOk(response);
       const responseJson = await response.json();
       this.correctAnswer = responseJson;
       this.hasCheckedAnswer = true;
