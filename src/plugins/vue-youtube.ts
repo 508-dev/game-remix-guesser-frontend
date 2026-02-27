@@ -1,6 +1,4 @@
-/* tslint:disable */
-// @ts-nocheck
-import { h } from 'vue';
+import { defineComponent, h } from 'vue';
 import player from 'youtube-player';
 
 const UNSTARTED = -1;
@@ -10,7 +8,20 @@ const PAUSED = 2;
 const BUFFERING = 3;
 const CUED = 5;
 
-export default {
+type YouTubePlayer = ReturnType<typeof player>;
+
+type PlayerEvent = {
+  target: any;
+  data?: number | null;
+};
+
+type PlayerProperties = {
+  videoId: string;
+  startSeconds?: number;
+  endSeconds?: number;
+};
+
+export default defineComponent({
   name: 'Youtube',
   props: {
     videoId: String,
@@ -45,7 +56,7 @@ export default {
   },
   data() {
     return {
-      player: {},
+      player: null as YouTubePlayer | null,
       events: {
         [UNSTARTED]: 'unstarted',
         [PLAYING]: 'playing',
@@ -53,34 +64,37 @@ export default {
         [ENDED]: 'ended',
         [BUFFERING]: 'buffering',
         [CUED]: 'cued'
-      },
-      resizeTimeout: null
+      } as Record<number, string>,
+      resizeTimeout: null as ReturnType<typeof setTimeout> | null
     };
   },
   computed: {
     aspectRatio() {
-      return this.width / this.height;
+      return Number(this.width) / Number(this.height);
     }
   },
   methods: {
-    playerReady(e) {
+    playerReady(e: PlayerEvent) {
       this.$emit('ready', e.target);
     },
-    playerStateChange(e) {
-      if (e.data !== null && e.data !== UNSTARTED) {
-        this.$emit(this.events[e.data], e.target);
+    playerStateChange(e: PlayerEvent) {
+      if (e.data !== null && e.data !== undefined && e.data !== UNSTARTED) {
+        const eventName = this.events[e.data];
+        eventName && this.$emit(eventName as any, e.target); // guard against events not anticipated by the events map. only fire if eventName is defined.
       }
     },
-    playerError(e) {
+    playerError(e: PlayerEvent) {
       this.$emit('error', e.target);
     },
-    updatePlayer(videoId) {
+    updatePlayer(videoId: string) {
+      if (!this.player) return;
+
       if (!videoId) {
         this.player.stopVideo();
         return;
       }
 
-      const params = { videoId: videoId };
+      const params: PlayerProperties = { videoId };
 
       if (typeof this.playerVars.start === 'number') {
         params.startSeconds = this.playerVars.start;
@@ -98,15 +112,17 @@ export default {
       this.player.cueVideoById(params);
     },
     resizeProportionally() {
-      this.player.getIframe().then((iframe) => {
+      if (!this.player) return;
+
+      this.player.getIframe().then((iframe: any) => {
         const width = this.fitParent ? iframe.parentElement.offsetWidth : iframe.offsetWidth;
         const height = width / this.aspectRatio;
-        this.player.setSize(width, height);
+        this.player && this.player.setSize(width, height);
       });
     },
     onResize() {
-      clearTimeout(this.resizeTimeout);
-      this.resizeTimeout = setTimeout(this.resizeProportionally, this.resizeDelay);
+      if (this.resizeTimeout !== null) clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => this.resizeProportionally(), this.resizeDelay);
     }
   },
   watch: {
@@ -115,30 +131,30 @@ export default {
       if (val) {
         window.addEventListener('resize', this.onResize);
         this.resizeProportionally();
-      } else {
+      } else if (this.player) {
         window.removeEventListener('resize', this.onResize);
-        this.player.setSize(this.width, this.height);
+        this.player.setSize(Number(this.width), Number(this.height));
       }
     },
     width(val) {
-      this.player.setSize(val, this.height);
+      this.player?.setSize(Number(val), Number(this.height));
     },
     height(val) {
-      this.player.setSize(this.width, val);
+      this.player?.setSize(Number(this.width), Number(val));
     }
   },
   beforeUnmount() {
-    if (this.player !== null && this.player.destroy) {
+    if (this.player?.destroy) {
       this.player.destroy();
-      delete this.player;
     }
+    this.player = null;
 
     if (this.resize) {
       window.removeEventListener('resize', this.onResize);
     }
   },
   mounted() {
-    window.YTConfig = {
+    (window as any).YTConfig = {
       host: 'https://www.youtube.com/iframe_api'
     };
 
@@ -160,13 +176,12 @@ export default {
       window.addEventListener('resize', this.onResize);
     }
 
-    //@ts-ignore
     if (this.fitParent) {
-      //@ts-ignore
       this.resizeProportionally();
     }
   },
+  expose: ['player'],
   render() {
     return h('div');
   }
-};
+});
