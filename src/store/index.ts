@@ -1,33 +1,42 @@
-// import { QuestionPackage, Choice, CorrectAnswer } from './types.ts';
 import { fetchApi } from './fetch';
+import type { Choice, CorrectAnswer, QuestionPackage } from './types';
 
 import { defineStore } from 'pinia';
-export interface CorrectAnswer {
-  origin_game: string;
-  remix_artist: string;
-  ocremix_remix_url: string;
-  original_song_title: string;
-}
-
-export interface Choice {
-  origin_game: string;
-  public_id: number;
-}
-
-export interface Question {
-  remix_youtube_url: string;
-  secret_id: number;
-}
-
-export interface QuestionPackage {
-  choices: Choice[];
-  question: Question;
-}
 
 // In which I question whether typescript is really worth the headache
 function getYoutubeIdFromUrl(url: string) {
   const blah = url.split(/(vi\/|v=|\/v\/|youtu\.be\/|\/embed\/)/);
-  return blah[2] !== undefined ? blah[2].split(/[^0-9a-z_\-]/i)[0] : blah[0];
+  return blah[2] !== undefined ? blah[2].split(/[^0-9a-z_-]/i)[0] : blah[0];
+}
+
+async function throwIfNotOk(response: Response) {
+  if (response.ok) return;
+
+  let details = '';
+  try {
+    const contentType = response.headers.get('content-type') ?? '';
+    if (contentType.includes('application/json')) {
+      const payload: unknown = await response.json();
+      if (typeof payload === 'string') {
+        details = payload;
+      } else if (payload && typeof payload === 'object') {
+        const objectPayload = payload as Record<string, unknown>;
+        const message = objectPayload.message ?? objectPayload.error ?? objectPayload.detail;
+        details = typeof message === 'string' ? message : JSON.stringify(payload);
+      }
+    } else {
+      details = await response.text();
+    }
+  } catch {
+    details = '';
+  }
+
+  const statusText = response.statusText || 'Request Failed';
+  throw new Error(
+    details
+      ? `HTTP ${response.status} ${statusText}: ${details}`
+      : `HTTP ${response.status} ${statusText}`
+  );
 }
 
 export interface State {
@@ -61,6 +70,16 @@ export const useStore = defineStore('store', {
     }
   },
   actions: {
+    async submitRemixForParsing(id: string) {
+      const response = await fetchApi(`/parse/${id}`);
+      await throwIfNotOk(response);
+      return response.json();
+    },
+    async seedDB() {
+      const response = await fetchApi('/seed/');
+      await throwIfNotOk(response);
+      return response.json();
+    },
     async getSong() {
       this.selectedAnswer = null;
       this.correctAnswer = null;
@@ -70,6 +89,25 @@ export const useStore = defineStore('store', {
       const response = await fetchApi('/game/', {});
       const responseJson = await response.json();
       this.questionPackage = responseJson;
+    },
+    async checkAnswer(payload: { public_id: number; secret_id: number }) {
+      this.correctAnswer = null;
+      this.hasCheckedAnswer = false;
+
+      const response = await fetchApi('/game/', {
+        method: 'POST',
+        mode: 'cors',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      await throwIfNotOk(response);
+      const responseJson = await response.json();
+      this.correctAnswer = responseJson;
+      this.hasCheckedAnswer = true;
+      return responseJson;
     },
     async submitAnswer() {
       this.correctAnswer = null;
