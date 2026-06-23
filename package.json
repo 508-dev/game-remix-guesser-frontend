@@ -37,7 +37,7 @@
     "eslint-plugin-vue": "^9.17.0",
     "geckodriver": "^4.3.3",
     "jsdom": "^24.0.0",
-    "nightwatch": "^3.4.1",
+    "nightwatch": "^3.16.0",
     "npm-run-all2": "^6.1.2",
     "prettier": "^3.0.3",
     "ts-node": "^10.9.2",
